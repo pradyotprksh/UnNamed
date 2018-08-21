@@ -6,16 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class LoginActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
-    private Button loginBtn, createLoginBtn;
+    private Button createBtn, signinLoginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        loginBtn = findViewById(R.id.loginBtn);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_sign_up);
+        createBtn = findViewById(R.id.createBtn);
+        createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -23,11 +23,11 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-        createLoginBtn = findViewById(R.id.createLoginBtn);
-        createLoginBtn.setOnClickListener(new View.OnClickListener() {
+        signinLoginBtn = findViewById(R.id.signLoginBtn);
+        signinLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
             }
