@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">UnNamed</string>
+    <string name="home">Home</string>
+    <string name="following">Following</string>
+    <string name="account">Account</string>
 </resources>
