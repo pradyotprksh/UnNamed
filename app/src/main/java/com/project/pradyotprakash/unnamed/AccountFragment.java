@@ -16,10 +16,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.TransitionManager;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +51,7 @@ public class AccountFragment extends Fragment {
     private Boolean isOpen = false;
     private ConstraintSet layout1, layout2;
     private ConstraintLayout constraintLayout;
-    private ImageView imageViewPhoto;
+    private ImageView imageViewPhoto, backgroundImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,11 +60,27 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         imageViewPhoto = view.findViewById(R.id.profileImage);
+        backgroundImage = view.findViewById(R.id.backgroundImage);
         layout1 = new ConstraintSet();
         layout2 = new ConstraintSet();
         constraintLayout = view.findViewById(R.id.constraint_layout);
         layout2.clone(getContext(), R.layout.expanded_fragment_account);
         layout1.clone(constraintLayout);
+        backgroundImage.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onClick(View v) {
+                if (!isOpen) {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    layout2.applyTo(constraintLayout);
+                    isOpen = !isOpen;
+                } else {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    layout1.applyTo(constraintLayout);
+                    isOpen = !isOpen;
+                }
+            }
+        });
         imageViewPhoto.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -75,8 +96,38 @@ public class AccountFragment extends Fragment {
                 }
             }
         });
+        registerForContextMenu(imageViewPhoto);
+        registerForContextMenu(backgroundImage);
 
         return view;
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        switch (v.getId()) {
+            case R.id.backgroundImage :
+                menu.setHeaderTitle("Background Image Options");
+                getActivity().getMenuInflater().inflate(R.menu.profile_extra_options, menu);
+                break;
+            case R.id.profileImage :
+                menu.setHeaderTitle("Profile Image Options");
+                getActivity().getMenuInflater().inflate(R.menu.profile_extra_options, menu);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.changeImage :
+                Toast.makeText(getContext(), "Change Image", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.seeFullscreen :
+                Toast.makeText(getContext(), "Fullscreen Image", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 }
