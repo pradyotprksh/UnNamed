@@ -5,7 +5,7 @@
     <color name="colorPrimaryDarkShade1">#414a6b</color>
     <color name="colorPrimaryDarkShade2">#576390</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="pink">#FE104D</color>
+    <color name="pink">#fe104d</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorWhiteTransparent">#80FFFFFF</color>
 </resources>
