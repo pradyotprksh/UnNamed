@@ -3,10 +3,14 @@
 
     <item
         android:id="@+id/changeImage"
-        android:title="Change Image" />
+        android:title="Change Profile Image" />
 
     <item
-        android:id="@+id/seeFullscreen"
-        android:title="See Image" />
+        android:id="@+id/changeBackgroundImage"
+        android:title="Change Profile Background Image" />
+
+    <item
+        android:id="@+id/accountSettings"
+        android:title="Change Account Settings" />
 
 </menu>

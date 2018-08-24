@@ -7,32 +7,22 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.method.ScrollingMovementMethod;
 import android.transition.TransitionManager;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,7 +41,9 @@ public class AccountFragment extends Fragment {
     private Boolean isOpen = false;
     private ConstraintSet layout1, layout2;
     private ConstraintLayout constraintLayout;
-    private ImageView imageViewPhoto, backgroundImage;
+    private CircleImageView profileImage;
+    private ImageView profileBackgroundImage;
+    private Uri profileImageUri, profileBackgroundImageUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,14 +51,14 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
-        imageViewPhoto = view.findViewById(R.id.profileImage);
-        backgroundImage = view.findViewById(R.id.backgroundImage);
+        profileImage = view.findViewById(R.id.profileImage);
+        profileBackgroundImage = view.findViewById(R.id.backgroundImage);
         layout1 = new ConstraintSet();
         layout2 = new ConstraintSet();
         constraintLayout = view.findViewById(R.id.constraint_layout);
         layout2.clone(getContext(), R.layout.expanded_fragment_account);
         layout1.clone(constraintLayout);
-        backgroundImage.setOnClickListener(new View.OnClickListener() {
+        profileBackgroundImage.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
@@ -81,7 +73,7 @@ public class AccountFragment extends Fragment {
                 }
             }
         });
-        imageViewPhoto.setOnClickListener(new View.OnClickListener() {
+        profileImage.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
@@ -96,8 +88,8 @@ public class AccountFragment extends Fragment {
                 }
             }
         });
-        registerForContextMenu(imageViewPhoto);
-        registerForContextMenu(backgroundImage);
+        registerForContextMenu(profileImage);
+        registerForContextMenu(profileBackgroundImage);
 
         return view;
     }
@@ -121,13 +113,60 @@ public class AccountFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.changeImage :
-                Toast.makeText(getContext(), "Change Image", Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    } else {
+                        Intent intent = CropImage
+                                .activity()
+                                .setAspectRatio(1,1)
+                                .getIntent(getContext());
+                        startActivityForResult(intent, 0);
+                    }
+                }
                 return true;
-            case R.id.seeFullscreen :
-                Toast.makeText(getContext(), "Fullscreen Image", Toast.LENGTH_SHORT).show();
+            case R.id.changeBackgroundImage :
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    } else {
+                        Intent intent = CropImage
+                                .activity()
+                                .setAspectRatio(2,1)
+                                .getIntent(getContext());
+                        startActivityForResult(intent, 1);
+                    }
+                }
+                return true;
+            case R.id.accountSettings :
+                Intent intent = new Intent(getContext(), AccountSettings.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                profileImageUri = result.getUri();
+                profileImage.setImageURI(profileImageUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        } else {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                profileBackgroundImageUri = result.getUri();
+                profileBackgroundImage.setImageURI(profileBackgroundImageUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
 }
