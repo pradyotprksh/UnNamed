@@ -123,6 +123,12 @@ public class AccountFragment extends Fragment {
                                 .getIntent(getContext());
                         startActivityForResult(intent, 0);
                     }
+                } else {
+                    Intent intent = CropImage
+                            .activity()
+                            .setAspectRatio(1,1)
+                            .getIntent(getContext());
+                    startActivityForResult(intent, 0);
                 }
                 return true;
             case R.id.changeBackgroundImage :
@@ -136,6 +142,12 @@ public class AccountFragment extends Fragment {
                                 .getIntent(getContext());
                         startActivityForResult(intent, 1);
                     }
+                } else {
+                    Intent intent = CropImage
+                            .activity()
+                            .setAspectRatio(2,1)
+                            .getIntent(getContext());
+                    startActivityForResult(intent, 1);
                 }
                 return true;
             case R.id.accountSettings :
