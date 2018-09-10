@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.lzyzsd.randomcolor.RandomColor;
+
 import java.util.List;
 
 public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapter.ViewHolder> {
@@ -30,6 +32,9 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerAdapte
         String blogPost = blog_list.get(position).getBlogPost();
         viewHolder.userName.setText(userName);
         viewHolder.blogPost.setText(blogPost);
+        RandomColor viewRandomColor = new RandomColor();
+        int viewColor = viewRandomColor.randomColor();
+        viewHolder.mView.setBackgroundColor(viewColor);
     }
 
     @Override
